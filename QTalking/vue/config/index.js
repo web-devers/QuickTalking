@@ -3,6 +3,7 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const proxyConfig = require('./proxy.config')
 
 module.exports = {
   dev: {
@@ -10,7 +11,14 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+        //本地调试
+      '/qtserver': {       //这里是我配置的名字
+            target: 'http://192.168.31.177:808', //这个路径是我代理到本地的php服务器,即你要请求的第三方接口
+            changeOrigin: true, //开启代理：在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，这样服务端和服务端进行数据的交互就不会有跨域问题
+            pathRewrite: {'^/qtserver': ''}  //这里重写路径运行后就代理到对应地址
+          }  
+    },
 
     // Various Dev Server settings
     // host: 'localhost', // can be overwritten by process.env.HOST
@@ -51,8 +59,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-
+    assetsPublicPath: './',
+    proxyTable: proxyConfig.proxy,
     /**
      * Source Maps
      */

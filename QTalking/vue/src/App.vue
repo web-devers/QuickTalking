@@ -38,6 +38,7 @@
 </template>
 <script type="text/ecmascript-6">
     import home from './components/Home/Home.vue';
+    // import {mapGetters,mapActions} from 'vuex'
 
     export default{
 			data(){
@@ -52,6 +53,9 @@
 					}
 				}
 			},
+      mounted(){
+        this.getCookie()
+      },
       computed:{
         submit(){
           var inp=0;
@@ -68,10 +72,65 @@
 			methods:{
 				login(){
 					console.log(this.userInfo);
+          var that=this;
+          this.setCookie('QTalking',JSON.stringify(this.userInfo),3)
           // var sex=this.userInfo.sex=='男'?"2":"3";
           // this.userInfo.img=`../../assets/img/3_0${sex}.png`;
-          this.loginStatus = true;
-				}
+          this.$http({
+              url:'/qtserver/login',
+              method:'post',
+              data:that.userInfo,
+              transformRequest: [function (data) {
+                let ret = ''
+                for (let it in data) {
+                  ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                }
+                return ret
+              }],
+          }).then(function(res){
+              console.log(res.data);
+              that.loginStatus = res.data.loginStatus;
+              console.log('emit',that.userInfo);
+              that.$socket.emit('start',that.userInfo);//触发start
+          }).catch(function(err){
+              console.log('err',err);
+          })
+          //设置cookie          
+  			},
+        setCookie(c_name,c_info,exdays) {
+            var exdate=new Date();//获取时间
+            exdate.setTime(exdate.getTime() + 24*60*60*1000*exdays);//保存的天数
+            //字符串拼接cookie
+            window.document.cookie=c_name+ "=" +c_info+";path=/;expires="+exdate.toGMTString();
+            // window.document.cookie="userinfo"+"="+c_info+";path=/;expires="+exdate.toGMTString();
+        },
+          //读取cookie
+        getCookie:function () {
+          if (document.cookie.length>0) {
+            console.log('cook',document.cookie);
+            var arr=document.cookie.split(';');
+            console.log('arr',arr);
+            //这里显示的格式需要切割一下自己可输出看下
+            for(var i=0;i<arr.length;i++){
+              var arr2=arr[i].split('=');//再次切割
+              //判断查找相对应的值
+              if(arr2[0]=='QTalking'){
+                console.log(arr2[1]);
+                this.userInfo=JSON.parse(arr2[1]);//保存到保存数据的地方
+                if(this.submit){
+                  // this.loginStatus = true;
+                  this.login();
+                }
+              // }else if(arr2[0]=='userPwd'){
+              //   this.ruleForm.password=arr2[1];
+              }
+            }
+          }
+        },
+        //清除cookie
+        clearCookie:function () {
+          this.setCookie("QTalking","",-1);//修改2值都为空，天数为负1天就好了
+        }
 			},
 			components:{
 				'home': home
@@ -79,7 +138,7 @@
 		}
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $rem:414/6.4rem;
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -98,13 +157,13 @@ $rem:414/6.4rem;
   .login{
     width:100%;
     height:(736-100-200)/$rem;
-    margin-top:100/$rem;
+    margin-top:30/$rem;
     background:#fff;
     display:flex;
     flex-direction:column;
     align-items: center;
     justify-content: space-around;
-    padding:50px 0;
+    -padding:10/$rem 0;
     .rad{
       border:none;
       background:none;
@@ -175,7 +234,7 @@ $rem:414/6.4rem;
       position:fixed;
       bottom:0;
       width:100%;
-      height:20/$rem;
+      height:50/$rem;
       background:#26a2ff;
     }
   }

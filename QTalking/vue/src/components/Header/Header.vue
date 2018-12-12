@@ -42,7 +42,7 @@
 	  }
 	}
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 $rem:414/6.4rem;
 	.head{
 		position: fixed;
@@ -73,16 +73,19 @@ $rem:414/6.4rem;
 			float:right;
 			margin:0.05rem -0.2rem 0 0;
 			img{
-				width: 0.8rem;
-				height: 0.8rem;
+				width: 0.7rem;
+				height: 0.7rem;
+				margin-top:-16/$rem;
 				display:inline-block;
 				border-radius:50%;
 				border: 2px solid #fff;
-				font-size: 0.3rem;
+				font-size: 0.5rem;
 				line-height: 0.8rem;
+				overflow:hidden;
+				box-sizing:border-box;
 			}
 			.info{
-				margin:0.2rem 0.05rem 0 0;
+				margin:0.2rem 0.1rem 0 0;
 				font-size:0.2rem;
 				display:inline-block;
 				color:#fff;
