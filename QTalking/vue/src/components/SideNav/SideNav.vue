@@ -81,13 +81,15 @@
 		background:#fcfcfc;
 		ul{
 			width:100/$rem;
-			height:9.6rem;
+			-height:9.6rem;
+			box-shadow:2px 2px 3px #ccc;
 			li{
 				float:top;
 				width:100%;
 				height:1.0rem;
+				border-bottom:1px solid #ccc;
 				-border-bottom:2px solid #ccc;
-				box-shadow:0 0px 3px #ccc inset;
+				-box-shadow:0 0px 3px #ccc inset;
 				&.active{
 					height:1.0rem;
 					border-left:0.05rem solid #4bafe3;

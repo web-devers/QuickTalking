@@ -39,8 +39,8 @@
 				<div class="swiper-scrollbar"></div>
 			</div>
 		</transition>
-		<div class="topmenu">
-			<p>A</p>
+		<div class="topmenu" v-if="topMenu" @click="ScrollTop()">
+		  <p>A</p>
 		</div>
 	</div>
 </template>
@@ -61,7 +61,8 @@
 	    	imgList:[],
 	    	username:null,
 	    	showInp:true,
-	    	showSwip:false	
+	    	showSwip:false,
+	    	topMenu:false
 	    }
 	  },
 	  computed:mapGetters([
@@ -93,11 +94,13 @@
 	                if (pos.y < -50) {
 	                  // this.loadData()
 	                  this.showInp=false
+	                  this.topMenu=true
 	                  console.log(this.showInp);
 	                }
 	                if (pos.y > 50) {
 	                  // this.loadData()
 	                  this.showInp=true
+	                  this.topMenu=false
 	                }
 	            })
         });
@@ -204,6 +207,10 @@
 	  	},
 	  	dw(url){
 	  		window.open(url)
+	  	},
+	  	ScrollTop(){
+        this.scroll.scrollTo(0, 0, 500)
+        this.topMenu=false;
 	  	}
 	  },
 	}
@@ -347,6 +354,20 @@ $rem:414/6.4rem;
 				bottom:0/$rem;
 				background:#333;
 			}
+		}
+		.topmenu{
+		  position:fixed;
+		  bottom:36px;
+		  right:30px;
+		  width:36px;
+		  height:36px;
+		  line-height:36px;
+		  border-radius:50%;
+		  background:#fff;
+      color:skyblue;
+		  font-size:24px;
+		  box-shadow: 0 2px 24px rgba(0,0,0,0.10);
+		  -background:url('../../assets/img/icon_back_top_h.png') no-repeat 0 0 /cover;
 		}
 	}
 </style>
