@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Chatroom from '@/components/Chatroom/Chatroom.vue'
 import Photo from '@/components/Photo/Photo.vue'
+import UploadImg from '@/components/UploadImg/UploadImg.vue'
 import Cave from '@/components/Cave/Cave.vue'
 import Star from '@/components/starSign/starSign.vue'
 
@@ -24,6 +25,11 @@ export default new Router({
       path: '/Photo:name',
       name: 'Photo',
       component: Photo
+    },
+    {
+      path: '/Picture:name',
+      name: 'UploadImg',
+      component: UploadImg
     },
     {
       path: '/Cave:name',

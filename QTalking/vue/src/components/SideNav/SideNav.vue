@@ -144,7 +144,6 @@
 					}
 				}
 			}
-			
 		}
 		.chatRoom{
 			&.move-enter-active, &.move-leave-active{

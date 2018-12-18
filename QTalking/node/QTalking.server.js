@@ -4,6 +4,11 @@ var session=require('express-session');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var utils = require('./libs/utils.js');
+var querystring = require('querystring');
+var fs = require('fs')
+var path=require('path');
+var uuid = require('node-uuid');
+var sd = require('silly-datetime');
 
 var app=express();
 // var swig=require('swig');
@@ -16,9 +21,12 @@ var utils=require('./libs/utils.js');
 var File=require('./libs/file.js');
 var filetool=new File.file();
 
-const db=mysql.createPool({host: 'localhost',user:'root',password:'root',database:'qtalking'})
+const db=mysql.createPool({host: '47.106.102.92',user:'levi',password:'1991',database:'qtalking'})
 
-app.use(bodyParser.urlencoded({extended: false}));
+//handle request entity too large
+// PayloadTooLargeError: request entity too large
+app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.urlencoded({limit:'50mb',extended:true}));
 app.use(session({
 	secret:'Qsession',
 	name:'Qsession',
@@ -28,14 +36,14 @@ app.use(session({
 	cookie:{
 		maxAge:20*3600*1000,
 		path:'/',
-		domain: '192.168.31.177',
+		// domain: '192.168.31.177',
+		domain: '192.168.101.9',
 		httpOnly: false
 	}
 }))
-
 app.all('*', function(req, res, next) {
     // res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Origin", "http://192.168.31.177:808");
+    res.header("Access-Control-Allow-Origin", "http://192.168.101.9:8087");
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
@@ -117,7 +125,7 @@ io.on('connection',function(sock){
 	// })
 })
 
-app.get('/pic',function(req,res,next){
+app.get('/qtserver/pic',function(req,res,next){
 	console.log(req.query.word);
 	console.log( req.session);
 	var word=req.query.word;
@@ -133,13 +141,13 @@ app.get('/pic',function(req,res,next){
 	// }).then()
 })
 
-app.get('/cave',function(req,res,next){
+app.get('/qtserver/cave',function(req,res,next){
 	var caveList=filetool.line('../Data/cave.json',function(arrCave){
 		// console.log(arrCave);
 		res.status(200).send(arrCave).end();
 	})
 });
-app.post('/cave',bodyParser.json(),function(req,res,next){
+app.post('/qtserver/cave',bodyParser.json(),function(req,res,next){
 	console.log(typeof(req.body),req.body);
 	var caveItem=JSON.stringify(req.body);
 	var caveList=filetool.write('../Data/cave.json',caveItem,function(data){
@@ -151,13 +159,13 @@ app.post('/cave',bodyParser.json(),function(req,res,next){
 });
 	
 	// res.write(imgs);
-app.get('/star',function(req,res,next){
+app.get('/qtserver/star',function(req,res,next){
 	var starList=filetool.line('../Data/star.json',function(arrStar){
 		// console.log(arrCave);
 		res.status(200).send(arrStar).end();
 	})
 });
-app.post('/star',bodyParser.json(),function(req,res,next){
+app.post('/qtserver/star',bodyParser.json(),function(req,res,next){
 	// console.log(typeof(req.body),req.body.boy,req.body.girl);
 	// var caveItem=JSON.stringify(req.body);
 	db.query("SELECT * FROM q_star_pair WHERE boy = ? AND girl = ? ",[req.body.boy,req.body.girl], (err, data)=>{
@@ -175,7 +183,7 @@ app.post('/star',bodyParser.json(),function(req,res,next){
     });
 });
 
-app.post('/login',bodyParser.json(),function(req,res,next){
+app.post('/qtserver/login',bodyParser.json(),function(req,res,next){
 	console.log(typeof(req.body),req.body);
 	// var userInfo=JSON.stringify(req.body);
 	var userInfo=req.body;
@@ -213,6 +221,73 @@ app.post('/login',bodyParser.json(),function(req,res,next){
 	}
 	
 });
+app.get('/qtserver/uploadimgs',function (req,res,next) {
+	var msglist=db.query("SELECT * FROM q_img_msg ORDER BY add_time DESC ",(err,data)=>{
+		if(err){
+			res.status(500).send('database error').end();
+		}else{
+			console.log(data);
+			res.status(200).send({result:'success',data})
+		}
+	})
+})
+app.post('/qtserver/uploadimgs',bodyParser.json(),function(req,res,next){
+	//接收前台POST过来的base64   image/png;base64,
+    var imgData=JSON.parse(req.body.imgs)
+    // imgData    =JSON.stringify(req.body.imgs).split(/^data\:image\/png\;base64\,$/g)
+    // imgData    =JSON.stringify(req.body.imgs).split(',')
+    var urllist=[],pms=[]
+    //过滤data:URL
+    imgData.forEach(it=>{
+        pms.push(writefiles(it))
+        // urllist.push("../media/img/"+name+".png")
+    })
+    Promise.all(pms).then(data=>{
+        urllist=data
+        insertImg(req.body.user,req.body.text,JSON.stringify(urllist)).then(
+            sus=>{
+                res.json({
+                    result:'成功',
+                    sendSuccess:true
+                });
+            },err=>{
+                console.log(err)
+                res.status(500).send('database error').end();
+            }
+        )
+    }).catch(err=>{
+        console.log(22,err)
+        reject(err)
+    })
+
+});
+function insertImg(user,text,imglist) {
+    return new Promise((resolve, reject) => {
+        var time=sd.format(Date.now()+1000*60*60*8, 'YYYY-MM-DD HH:mm:ss');
+        db.query("INSERT INTO q_img_msg(id,user,text,imglist,add_time) VALUES(0,?,?,?,?)",[user,text,imglist,time], (err, data)=> {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data)
+            }
+        })
+    });
+}
+var writefiles=function(file){
+    return new Promise(((resolve, reject) => {
+        var base64Data = file.replace(/^data:image\/\w+;base64,/, "");
+        var dataBuffer = new Buffer(base64Data, 'base64');
+        var name=uuid.v4();
+        var filedir = ("/media/img/"+name+".png");
+        fs.writeFile('./static'+filedir, dataBuffer, function(err) {
+            if(err) {
+                reject(err);
+            }else{
+                resolve(filedir)
+            }
+        });
+    }))
+}
 // console.log(process.cwd());
 //用户请求
 // app.use('*', function(req, res, next){
@@ -220,7 +295,8 @@ app.post('/login',bodyParser.json(),function(req,res,next){
 // })
 
 app.use(static('./static/'));
-http.listen(808,'192.168.31.177');
+// http.listen(808,'192.168.31.177');
+http.listen(808,'192.168.101.9');
 
 // ALTER USER "root"@"localhost" IDENTIFIED  BY "你的新密码";
 
