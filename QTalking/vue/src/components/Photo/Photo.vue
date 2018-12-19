@@ -2,51 +2,38 @@
 	<div class="photo">
 		<div class="back">
 			<i @click='back'>
-				<img src="../../assets/img/1_05.png"></i>
+				<img width="100%" src="../../assets/img/1_05.png"></i>
 			<p>图片欣赏</p>
 		</div>
 		<transition name='move'>
 			<div class="input" v-show='showInp'>
-				<mt-field placeholder="" v-model="keyWord">
-				</mt-field>
+        <input type="text" class="ip-cell" placeholder="请输入要搜索的关键" v-model="keyWord">
 				<mt-button type="primary" @click="search">搜索</mt-button>
 			</div>
 		</transition>
 		<loading v-show="loading"></loading>
 		<transition name='move'>
-		<div class="content" ref="photoWrapper" >
+		<div class="content" ref="photoWrapper" v-show='!showSwip'>
 			<ul class="imgList">
 				<li v-for="(item,index) in imgList">
 					<!-- {{substring(item)}} -->
-					<img :src=substring(item) width="100%" @click='swip(index)'>
+					<img :src="substring(item)" width="100%" @click='swip(index)'>
 				</li>
 			</ul>
 		</div>
 		</transition>
-		<div class="bg" v-show='showSwip' @click='clswip'></div>
-		<div class="control" v-show='showSwip'>
-			<i class="fl" @click='clswip'>x</i>
-			<!-- <a :href="" download=".png"></a> -->
-			<i class="fr" @click='download'></i>
-		</div>
-		<transition >
-			<div class="swiper-container" v-show='showSwip' ref='swip'>
-				<ul class="swiper-wrapper">
-					<li class="swiper-slide" v-for="(item,index) in imgList">
-						<img :src=substring(item) width="100%" @click='dw(substring(item))'>
-					</li>
-				</ul>
-				<div class="swiper-scrollbar"></div>
-			</div>
-		</transition>
-		<div class="topmenu" v-if="topMenu" @click="ScrollTop()">
+    <keep-alive>
+      <MySwiper :imgs="SwipList" :idx="swipidx" v-if="showSwip"></MySwiper>
+    </keep-alive>
+		<div class="topmenu" v-if="topMenu&&!showSwip" @click="ScrollTop()">
 		  <p>A</p>
 		</div>
 	</div>
 </template>
 <script type="text/javascript">
-	import Swiper from 'swiper';
 	import BSscroll from 'better-scroll'
+  import MySwiper from '../MySwiper/MySwiper'
+  import eventBus from '../../eventBus'
 	import {mapGetters,mapActions} from 'vuex'
 	export default {
 	  name: 'home',
@@ -55,6 +42,9 @@
 	  		type: Object
 	  	}
 	  },
+    components:{
+	    MySwiper
+    },
 	  data () {
 	    return {
 	    	keyWord:'',
@@ -62,7 +52,9 @@
 	    	username:null,
 	    	showInp:true,
 	    	showSwip:false,
-	    	topMenu:false
+	    	topMenu:false,
+        SwipList:[],
+        swipidx:0
 	    }
 	  },
 	  computed:mapGetters([
@@ -89,36 +81,32 @@
 		    	// console.log('down',pos)
 		    });
 			this.scroll.on('touchEnd', (pos) => {
-                	// 下拉动作
-                	console.log(pos);
-	                if (pos.y < -50) {
-	                  // this.loadData()
-	                  this.showInp=false
-	                  this.topMenu=true
-	                  console.log(this.showInp);
-	                }
-	                if (pos.y > 50) {
-	                  // this.loadData()
-	                  this.showInp=true
-	                  this.topMenu=false
-	                }
-	            })
-        });
+            // 下拉动作
+            if (pos.y < -50) {
+              // this.loadData()
+              this.showInp=false
+              this.topMenu=true
+            }
+            if (pos.y > 50) {
+              // this.loadData()
+              this.showInp=true
+              this.topMenu=false
+            }
+        })
+      });
 	  },
 	  mounted(){
 	  		var reg=/(\/\w+):([\u4e00-\u9fa5_a-zA-Z0-9]+$)/;
-			console.log(this.$route.path);
-			console.log(this.$route.path.match(reg));
-			this.username=this.$route.path.match(reg)[2];
-	  		if(localStorage.getItem(this.username+'pic')){
-				this.imgList
-				=JSON.parse(localStorage.getItem(this.username+'pic'));
-				setTimeout(()=>{
-		         this.scroll.refresh();
-		         this.initSwip(0);
-		     	},1000)
-			}
-
+        console.log(this.$route.path);
+        console.log(this.$route.path.match(reg));
+        this.username=this.$route.path.match(reg)[2];
+          if(localStorage.getItem(this.username+'pic')){
+          this.imgList
+          =JSON.parse(localStorage.getItem(this.username+'pic'));
+          setTimeout(()=>{
+               this.scroll.refresh();
+            },1000)
+        }
 	  },
 	  methods:{
 	  	back(){
@@ -129,7 +117,7 @@
 	  		}
 	  		localStorage.setItem(key, JSON.stringify(value));
 	  		console.log(JSON.parse(localStorage.getItem(key)));
-			window.history.go(-1)
+			  window.history.go(-1)
 	  	},
 	  	search(){
 	  		console.log(this.keyWord);
@@ -141,10 +129,10 @@
 		  			// console.log(JSON.parse(that.imgList[0]));
 		  			// console.log( eval('(' + that.imgList[0] + ')'));
 		  			that.$nextTick(() => {
-	                    setTimeout(()=>{
-		                    that.scroll.refresh();
-		                },3000)
-	                })
+                setTimeout(()=>{
+                  that.scroll.refresh();
+              },3000)
+            })
 		  		}).catch(function(err){
 		  			console.log(err);
 		  		})
@@ -163,56 +151,28 @@
 			// Console.WriteLine(rg.Match(str));
 	  	},
 	  	swip(index){
+	  	  this.swipidx=index
 	  		this.showSwip=true;
-	  		// this.initSwip(index);
-	  		setTimeout(() => {
-		        this.swiper.slideTo(index, 50, false);
-		    }, 500);
+	  		this.imgList.forEach(img=>{
+	  		  this.SwipList.push(this.substring(img))
+        })
+        eventBus.$on("swiperclose",function (flag) {
+          this.showSwip=flag.showSwip
+        }.bind(this))
 	  	},
-	  	initSwip(n){
-	  		console.log(n);
-	  		this.swiper=new Swiper('.swiper-container', {
-			// this.swiper=new Swiper(this.$refs.swip, {
-				// initialSlide :n,
-				loop:false,
-				// slidesPerView: this.imgList.length,
-				autoplay: {
-					delay: 1800,
-					stopOnLastSlide: false,
-					disableOnInteraction: true,
-				},
-				scrollbar: {
-				   el: '.swiper-scrollbar',
-				},
-				// pagination : '.swiper-pagination', 
-				direction : 'horizontal',
-				autoHeight: false,
-				// effect: 'fade'
-			})
-			// setTimeout(() => {
-			 //   this.swiper.slideTo(7, 50, false);
-			 //}, 500);
-	  	},
-	  	download(){
 
-	  	},
-	  	clswip(){
-	  		if(this.swiper){
-		  		// mySwiper.destroy(deleteInstance, cleanupStyles)
-		  		// console.log(this.swiper);
-		  		// this.swiper.destroy(false, true)
-		  		// console.log(this.swiper);
-	  		}
-	  		this.showSwip=false;
-	  	},
-	  	dw(url){
-	  		window.open(url)
-	  	},
 	  	ScrollTop(){
         this.scroll.scrollTo(0, 0, 500)
         this.topMenu=false;
-	  	}
+	  	},
+      substring(str){
+	      str=str.substr(9)
+	  		return str.replace(/\"/g,"");
+      }
 	  },
+    filters:{
+
+    }
 	}
 </script>
 <style lang="scss" scoped>
@@ -223,20 +183,21 @@ $rem:414/6.4rem;
 		left:0/$rem;
 		min-width:414/$rem;
 		width:100%;
-		height:(736-64)/$rem;
+		height:100%;
 		background:#fff;
 		z-index:10;
 		.back{
 			width:100%;
-			height:64/$rem;
+			height:36/$rem;
 			background:#26a2ff;
 			-background:transparent;
-			font-size:22px;
-			line-height:64px;
+			font-size:16px;
+			line-height:36px;
 			color:#fff;
 			text-align:center;
-			z-index:11;
 			i{
+        width: 36/$rem;
+        height: 36/$rem;
 				float:left;
 				margin-right:-(50/$rem);
 			}
@@ -249,26 +210,26 @@ $rem:414/6.4rem;
 				transform-origin: center top;
 				transform: translate3d(0,0, 0) scale3d(1,0,1)
 			}
-			-position:fixed;
-			-top:64/$rem;
-			-margin-top:64/$rem;
 			width:100%;
-			height:54/$rem;
+			height:36/$rem;
 			background:#fff;
 			box-shadow:0 0 3px #bbb;
-			padding:12/$rem 0;
-			.mint-cell{
-				width:290/$rem;
-				float:left;
-				-border:1px solid #bbb;
-				box-shadow:0 0 2px #bbb inset;
+			padding:6/$rem 0;
+      display: flex;
+			.ip-cell{
+        flex: 1;
+        height: 28/$rem;
+        border: 1px solid deepskyblue;
+				-box-shadow:0 0 2px #bbb inset;
 				border-radius:5px;
 				margin-left:12/$rem;
+        text-indent: 8px;
 			}
 			.mint-button{
-				float:right;
-				vertical-align:text-bottom;
-				margin:5px 12/$rem 0 5/$rem;
+        font-size: 16px;
+        width: 63/$rem;
+        height: 28/$rem;
+				margin:2px 12/$rem ;
 			}
 		}
 		.content{
@@ -297,62 +258,6 @@ $rem:414/6.4rem;
 						margin-bottom:120/$rem;
 					}
 				}
-			}
-		}
-		.bg{
-			position:fixed;
-			top:0;
-			width:100%;
-			height:100%;
-			-padding-top:20/$rem;
-			background:#000;
-			filter:blur(5px);
-		}
-		.control{
-			position:absolute;
-			top:0/$rem;
-			width:100%;
-			height:36/$rem;
-			i{
-				width:30/$rem;
-				height:30/$rem;
-				font-size:30/$rem;
-				font-style:normal;
-				line-height:36/$rem;
-				&.fl{
-					float:left;
-					margin-left:10/$rem;
-				}
-				&.fr{
-					float:right;
-					margin:5/$rem 10/$rem 0 0;
-					-background:url('../../assets/img/1_26.png') 0 0/cover;
-				}
-			}
-		}
-		.swiper-container{
-			position:absolute;
-			top:30/$rem;
-			width:100%;
-			height:auto;
-			-height:100%;
-			.swiper-wrapper{
-				.swiper-slide{
-					width:100%;
-					box-sizing:border-box;
-					-position:absolute;
-					width:100%;
-					-height:auto;
-					margin:auto;
-					img{
-						width:100%;
-						box-shadow:0px 0px 2px #fff;
-					}
-				}
-			}
-			.swiper-scrollbar{
-				bottom:0/$rem;
-				background:#333;
 			}
 		}
 		.topmenu{

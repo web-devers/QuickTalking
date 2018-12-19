@@ -2,7 +2,7 @@
 	<div class="caves">
 		<div class="back">
 			<i @click='back'>
-				<img src="../../assets/img/1_05.png"></i>
+				<img src="../../assets/img/1_05.png" width="100%"></i>
 			<p>树洞里的秘密</p>
 		</div>
 		<loading v-show="loading"></loading>
@@ -142,8 +142,12 @@
 	  	jsonps(str){
 	  		return JSON.parse(str);
 	  	},
+      bgcolor(){
+	  	  return `rgb(${colradm()}),${colradm()},${colradm()})`
+        // rgb('+colradm()+','+colradm()+','+colradm()+')
+      },
 	  	colradm(){
-			return Math.random()*255;
+			  return Math.random()*255;
 	  	}
 	  },
 	}
@@ -161,60 +165,58 @@ $num:0;
 		left:0/$rem;
 		min-width:414/$rem;
 		width:100%;
-		height:(736-64)/$rem;
+    height: 100%;
 		background:#fff;
+    display: flex;
+    flex-direction: column;
 		z-index:10;
 		.back{
 			width:100%;
-			height:64/$rem;
+			height:36/$rem;
 			background:#26a2ff;
 			-background:transparent;
-			font-size:22px;
-			line-height:64px;
+			font-size:16px;
+			line-height:36px;
 			color:#fff;
 			text-align:center;
 			i{
+        width: 36/$rem;
+        height: 36/$rem;
 				float:left;
 				margin-right:-(50/$rem);
 			}
 		}
 		.input{
-			position:fixed;
-			bottom:0/$rem;
 			width:100%;
+      height: 81/$rem;
 			background:#fff;
 			box-shadow:0 0 3px #bbb;
-			padding:8px 0;
+			padding:6px 0;
+			font-size:16/$rem;
 			.mint-cell{
 				width:360/$rem;
-				-height:64/$rem;
-				-line-height:30/$rem;
-				font-size:24/$rem;
-				-float:left;
-				-border:1px solid #bbb;
-				box-shadow:0 0 2px #bbb inset;
+				border:1px solid deepskyblue;
+				-box-shadow:0 0 2px #bbb inset;
 				border-radius:5px;
 				-margin-left:28/$rem;
 				margin:0 auto;
 			}
 			.mint-button{
 				-float:right;
-				-width:360/$rem;
+				width:360/$rem;
+        height: 24/$rem;
 				vertical-align:text-bottom;
-				margin:10px auto;
+				margin:5px auto;
 			}
 		}
 		.content{
 			-width:100%;
 			position:relative;
-			margin-top:10/$rem;
-			height:500/$rem;
+			margin-top:6/$rem;
+      flex:1;
 			overflow:hidden;
 			position:relative;
 			.caveList{
-				position:absolute;
-				bottom:0;
-				left:18/$rem;
 				width:360/$rem;
 				margin:10/$rem auto;
 				padding-bottom:10/$rem;

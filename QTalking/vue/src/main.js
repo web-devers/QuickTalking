@@ -40,7 +40,7 @@ axios.interceptors.response.use(function(response){
 	return Promise.reject(error);
 });
 // axios.defaults.baseURL='http://47.106.102.92:808';//配置请求的根路径
-axios.defaults.baseURL='http://192.168.101.9:808';//配置请求的根路径
+axios.defaults.baseURL='http://192.168.101.9:8088';//配置请求的根路径
 axios.defaults.withCredentials=true;
 axios.defaults.headers.post['Content-Type']='application/x-www-form-urlencoded';//设置post头部信息
 // axios.defaults.headers.post['enctype']='application/x-www-form-urlencoded';

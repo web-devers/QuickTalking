@@ -43,7 +43,7 @@ app.use(session({
 }))
 app.all('*', function(req, res, next) {
     // res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Origin", "http://192.168.101.9:8087");
+    res.header("Access-Control-Allow-Origin", "http://192.168.101.9:8088");
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
@@ -125,7 +125,7 @@ io.on('connection',function(sock){
 	// })
 })
 
-app.get('/qtserver/pic',function(req,res,next){
+app.get('/pic',function(req,res,next){
 	console.log(req.query.word);
 	console.log( req.session);
 	var word=req.query.word;
@@ -141,13 +141,13 @@ app.get('/qtserver/pic',function(req,res,next){
 	// }).then()
 })
 
-app.get('/qtserver/cave',function(req,res,next){
+app.get('/cave',function(req,res,next){
 	var caveList=filetool.line('../Data/cave.json',function(arrCave){
 		// console.log(arrCave);
 		res.status(200).send(arrCave).end();
 	})
 });
-app.post('/qtserver/cave',bodyParser.json(),function(req,res,next){
+app.post('/cave',bodyParser.json(),function(req,res,next){
 	console.log(typeof(req.body),req.body);
 	var caveItem=JSON.stringify(req.body);
 	var caveList=filetool.write('../Data/cave.json',caveItem,function(data){
@@ -159,13 +159,13 @@ app.post('/qtserver/cave',bodyParser.json(),function(req,res,next){
 });
 	
 	// res.write(imgs);
-app.get('/qtserver/star',function(req,res,next){
+app.get('/star',function(req,res,next){
 	var starList=filetool.line('../Data/star.json',function(arrStar){
 		// console.log(arrCave);
 		res.status(200).send(arrStar).end();
 	})
 });
-app.post('/qtserver/star',bodyParser.json(),function(req,res,next){
+app.post('/star',bodyParser.json(),function(req,res,next){
 	// console.log(typeof(req.body),req.body.boy,req.body.girl);
 	// var caveItem=JSON.stringify(req.body);
 	db.query("SELECT * FROM q_star_pair WHERE boy = ? AND girl = ? ",[req.body.boy,req.body.girl], (err, data)=>{
@@ -183,7 +183,7 @@ app.post('/qtserver/star',bodyParser.json(),function(req,res,next){
     });
 });
 
-app.post('/qtserver/login',bodyParser.json(),function(req,res,next){
+app.post('/login',bodyParser.json(),function(req,res,next){
 	console.log(typeof(req.body),req.body);
 	// var userInfo=JSON.stringify(req.body);
 	var userInfo=req.body;
@@ -221,7 +221,7 @@ app.post('/qtserver/login',bodyParser.json(),function(req,res,next){
 	}
 	
 });
-app.get('/qtserver/uploadimgs',function (req,res,next) {
+app.get('/uploadimgs',function (req,res,next) {
 	var msglist=db.query("SELECT * FROM q_img_msg ORDER BY add_time DESC ",(err,data)=>{
 		if(err){
 			res.status(500).send('database error').end();
@@ -231,7 +231,7 @@ app.get('/qtserver/uploadimgs',function (req,res,next) {
 		}
 	})
 })
-app.post('/qtserver/uploadimgs',bodyParser.json(),function(req,res,next){
+app.post('/uploadimgs',bodyParser.json(),function(req,res,next){
 	//接收前台POST过来的base64   image/png;base64,
     var imgData=JSON.parse(req.body.imgs)
     // imgData    =JSON.stringify(req.body.imgs).split(/^data\:image\/png\;base64\,$/g)

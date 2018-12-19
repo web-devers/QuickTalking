@@ -78,7 +78,7 @@
           // this.userInfo.img=`../../assets/img/3_0${sex}.png`;
           this.$http({
               url:'/qtserver/login',
-              method:'post',
+              method:'POST',
               data:that.userInfo,
               transformRequest: [function (data) {
                 let ret = ''

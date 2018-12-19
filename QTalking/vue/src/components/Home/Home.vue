@@ -1,14 +1,14 @@
 <template>
-	<div class="home">
-		<Header :user="user" @tog="showNav"></Header>
-		<transition name="move">
-			<SideNav :user="user" v-show='navTag'></SideNav>
-		</transition>
-		home
-		{{msg}}
+  <div class="home">
+  	<transition-group name="flip" tag="div" class="flip">
+        <!--<transition name="move">-->
+          <SideNav :user="user" v-show='navTag' :navtag="navTag" :key="1"></SideNav>
+        <!--</transition>-->
+          <Header :user="user" @tog="showNav" :key="2"></Header>
 <!-- 		<p>{{user.name}}</p>
 		<p>{{user.age}}</p>
 		<p>{{user.city}}</p> -->
+  	</transition-group>
 	</div>
 </template>
 <script type="text/javascript">
@@ -39,17 +39,30 @@
 	}
 </script>
 <style lang="scss" scoped>
+  $rem:414/6.4rem;
 	.home{
-		padding-top: 0.5rem;
+    .flip{
+      display: flex;
+      width: 100%;
+    }
+    .flip-enter, .flip-leave-to{
+      transform: translate3d(100/$rem, 0, 0);
+      box-shadow: none;
+    }
+    .flip-leave-active {
+      position: absolute;
+      transform: translate3d(-100%, 0, 0);
+      box-shadow: none;
+    }
+    flex-direction: row;
 		.sideNav{
 			display:block;
-			&.move-enter-active, &.move-leave-active{
-				transition: all 0.4s linear;
-			}
-			&.move-enter, &.move-leave-active{
-				transform: translate3d(-100%, 0, 0);
-			}
+      transition: all 0.5s linear;
+
 		}
-		
+    .head{
+      display: block;
+      flex: 1;
+   }
 	}
 </style>

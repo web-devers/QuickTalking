@@ -2,10 +2,10 @@
     <div class="uploadimg">
         <div class="back">
           <i @click='back'>
-            <img src="../../assets/img/1_05.png"></i>
+            <img width="100%" src="../../assets/img/1_05.png"></i>
           <p>图片发表</p>
         </div>
-        <div class="content">
+        <div class="content" v-if="!showSwip">
           <ul class="msg-cont">
             <li v-for="it,idx in msgShowList">
               <div class="img-head">
@@ -19,19 +19,19 @@
               </div>
               <p class="img-word">{{it.text}}</p>
               <div class="flex-row imgcnteq1" v-if="it.imglist.length==1">
-                <img v-for="img in it.imglist" :src="'/qtserver'+img" alt="">
+                <img v-for="(img,i) in it.imglist" :src="'/qtserver'+img" alt="" @click='swip(i,it.imglist)'>
               </div>
               <div class="flex-row imgcnteq2" v-if="it.imglist.length==2">
-                <img v-for="img in it.imglist" :src="'/qtserver'+img" alt="">
+                <img v-for="(img,i) in it.imglist" :src="'/qtserver'+img" alt="" @click='swip(i,it.imglist)'>
               </div>
               <div class="flex-row imgcnteq3" v-if="it.imglist.length==3">
-                <img v-for="img in it.imglist" :src="'/qtserver'+img" alt="">
+                <img v-for="(img,i) in it.imglist" :src="'/qtserver'+img" alt="" @click='swip(i,it.imglist)'>
               </div>
               <div class="flex-row imgcnteq4" v-if="it.imglist.length==4">
-                <img v-for="img in it.imglist" :src="'/qtserver'+img" alt="">
+                <img v-for="(img,i) in it.imglist" :src="'/qtserver'+img" alt="" @click='swip(i,it.imglist)'>
               </div>
               <div class="flex-row imgcntge5" v-if="it.imglist.length>=5">
-                <img v-for="img in it.imglist" :src="'/qtserver'+img" alt="">
+                <img v-for="(img,i) in it.imglist" :src="'/qtserver'+img" alt="" @click='swip(i,it.imglist)'>
               </div>
             </li>
           </ul>
@@ -57,10 +57,15 @@
               </div>
           </div>
         </div>
+        <!--<keep-alive>-->
+          <MySwiper :imgs="SwipList" :idx="swipidx" v-if="showSwip"></MySwiper>
+        <!--</keep-alive>-->
     </div>
 </template>
 
 <script>
+    import MySwiper from '../MySwiper/MySwiper'
+    import eventBus from '../../eventBus'
     export default {
         name: "uploadImg",
         props:{
@@ -68,22 +73,29 @@
             type: Object
           }
         },
+        components:{
+          MySwiper
+        },
         data () {
           return {
-            qtserverurl:'http://192.168.101.9:808',
+            username:'',
             showimg:false,
             qmsglist:{
               text:'',
               imgs:[]
             },
-            msgShowList:[]
+            msgShowList:[],
+            showSwip:false,
+            SwipList:[],
+            swipidx:0
           }
         },
         created(){
           this.getMsgList();
         },
         mounted(){
-
+          var reg=/(\/\w+):([\u4e00-\u9fa5_a-zA-Z0-9]+$)/;
+          this.username=this.$route.path.match(reg)[2];
         },
         methods:{
           back(){
@@ -126,7 +138,7 @@
                 method:'post',
                 data:{
                   // user:this.user,
-                  user:'levi',
+                  user:this.username,
                   text:this.qmsglist.text,
                   imgs:JSON.stringify(urllist)
                 },
@@ -168,6 +180,17 @@
               }
             }
           },
+          swip(index,imgs){
+            this.SwipList=[]
+            imgs.forEach(img=>{
+              this.SwipList.push("/qtserver"+img)
+            })
+            this.swipidx=index
+            this.showSwip=true;
+            eventBus.$on("swiperclose",function (flag) {
+              this.showSwip=flag.showSwip
+            }.bind(this))
+          },
           remove(idx){
             console.log(idx)
             this.qmsglist.imgs.splice(idx,1)
@@ -191,19 +214,22 @@
     flex-direction: column;
 		min-width:414/$rem;
 		width:100%;
-		height:(736)/$rem;
+		height: 100%;
+    -height:(736)/$rem;
 		background:#fff;
 		z-index:10;
 		.back{
 			width:100%;
-			height:64/$rem;
+			height:36/$rem;
 			background:#26a2ff;
-			font-size:22px;
-			line-height:64px;
+			-background:transparent;
+			font-size:16px;
+			line-height:36px;
 			color:#fff;
 			text-align:center;
-			z-index:11;
 			i{
+        width: 36/$rem;
+        height: 36/$rem;
 				float:left;
 				margin-right:-(50/$rem);
 			}

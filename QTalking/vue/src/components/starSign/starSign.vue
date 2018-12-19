@@ -6,7 +6,8 @@
 			<p>星座信息</p>
 		</div> -->
 		<i @click='back'>
-				<img src="../../assets/img/1_05.png"></i>
+				<img width="100%" src="../../assets/img/1_05.png">
+    </i>
 		<mt-navbar v-model="selected">
 		  <mt-tab-item id="1">
 		  <mt-button size="small" plain>星座查询</mt-button>
@@ -19,10 +20,11 @@
 		<mt-tab-container v-model="selected">
 		  <mt-tab-container-item id="1">
 		    <div class="input1">
-				<mt-field placeholder="请输入星座" v-model="starWord" type="text" size="small">
-				</mt-field>
-				<mt-button type="primary" @click="search" size="small">查询</mt-button>
-			</div>
+				<!--<mt-field placeholder="请输入星座" v-model="starWord" type="text" size="small">-->
+				<!--</mt-field>-->
+          <input class="ip-cell" type="text" placeholder="请输入星座" v-model="starWord" >
+          <mt-button type="primary" @click="search" size="small">查询</mt-button>
+			  </div>
 			<loading v-show="loading"></loading>
 				<div class="content1" ref="starWrapper1">
 				<div class="wrap">
@@ -204,8 +206,8 @@
 	  		}
 	  		localStorage.setItem(key, JSON.stringify(value));
 	  		console.log(JSON.parse(localStorage.getItem(key)));
-			window.history.go(-1);
-			this.hideDtlAll()
+        window.history.go(-1);
+        this.hideDtlAll()
 	  	},
 	  	compile(){
 	  		var data={
@@ -316,56 +318,66 @@ $rem:414/6.4rem;
 		z-index:10;
 		.back{
 			width:100%;
-			height:64/$rem;
+			height:36/$rem;
 			background:#26a2ff;
 			-background:transparent;
-			font-size:22px;
-			line-height:64px;
+			font-size:16px;
+			line-height:36px;
 			color:#fff;
 			text-align:center;
 			i{
+        width: 36/$rem;
+        height: 36/$rem;
 				float:left;
 				margin-right:-(50/$rem);
 			}
 		}
 		i{
-			-float:left;
 			position:fixed;
-			top:4px;
+			top:3px;
 			left:6px;
+      width: 36/$rem;
+      height: 36/$rem;
 			margin-right:-(50/$rem);
-			margin-top:(8/$rem);
 		}
 		.mint-navbar{
 			width:100%;
-			padding:0 16/$rem;
+      height: 36/$rem;
+			padding:0 36/$rem;
 			background:#26a2ff;
-			.mint-button{
-				border:1px solid #fff;
-				color:#fff;
-			}
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .mint-tab-item-label{
+        width: 45%;
+        position: absolute;
+        top:0;
+        .mint-button{
+          height: 24/$rem;
+          border:1px solid #fff;
+          color:#fff;
+          margin-top: 6/$rem;
+        }
+      }
 		}
 		.input1{
 			width:100%;
 			background:#fff;
-			box-shadow:0 0 3px #bbb;
+			-box-shadow:0 0 3px #bbb;
 			padding:8px 0;
-			.mint-cell{
-				width:200/$rem;
-				-height:30/$rem;
-				-line-height:30/$rem;
-				font-size:10/$rem;
-				float:left;
-				-border:1px solid #bbb;
-				box-shadow:0 0 2px #bbb inset;
-				border-radius:5px;
-				margin-left:45/$rem;
+      display: flex;
+			.ip-cell{
+        flex: 1;
+				height:30/$rem;
+				font-size:8/$rem;
+				border-radius:3px;
+        margin:0 25/$rem;
+        border: 1px solid deepskyblue;
+        text-indent: 5px;
 			}
 			.mint-button{
-				-float:right;
-				-width:360/$rem;
-				vertical-align:text-bottom;
-				margin:10px auto;
+				width:90/$rem;
+				margin:0 10/$rem;
 			}
 		}
 		.input2{
@@ -410,10 +422,7 @@ $rem:414/6.4rem;
 			}
 		}
 		.content1{
-			-width:100%;
-			margin-top:0/$rem;
-			-height:600/$rem;
-			-flex:0 1 auto;
+			margin-top:20/$rem;
 			min-height:419/$rem;
 			height:600/$rem;
 			box-sizing:border-box;
@@ -497,7 +506,7 @@ $rem:414/6.4rem;
 			min-height:423/$rem;
 			height:600/$rem;
 			padding:20px 10px;
-			background:url('http://192.168.31.177:808/img/bg-1_03.png') center -80px /cover;
+			background:url('http://47.106.102.92:808/img/bg-1_03.png') center -80px /cover;
 			overflow:hidden;
 			.wrapper{
 				width:100%;
