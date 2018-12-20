@@ -116,7 +116,7 @@
                 var imglist=res.data.data;
                 imglist.forEach(it=>{
                   this.msgShowList.push({
-                    user:it.user,
+                    user:it.username,
                     text:it.text,
                     imglist:JSON.parse(it.imglist),
                     addTime:it.add_time

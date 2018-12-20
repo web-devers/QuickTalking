@@ -122,7 +122,7 @@
                   url:'/qtserver/updavator',
                   method:'post',
                   data:{
-                    user:this.user.name,
+                    user:this.user.username,
                     avator:this.selAvator
                   },
                   transformRequest: [function (data) {

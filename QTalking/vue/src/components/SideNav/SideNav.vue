@@ -13,7 +13,7 @@
     </transition>
 		<ul>
 			<transition-group name="list-nav" >
-        <router-link v-for="rt,idx in navlist" :key="idx" :to="rt.to+user.name" tag="li" active-class="active"  :style="{transitionProperty:'all',transitionDuration: (1+0.1*idx)+'s'}" v-if="navtag">
+        <router-link v-for="rt,idx in navlist" :key="idx" :to="rt.to+user.username" tag="li" active-class="active"  :style="{transitionProperty:'all',transitionDuration: (1+0.1*idx)+'s'}" v-if="navtag">
           <a href="javascript:;"><i :class="rt.claz"></i>{{rt.name}}</a>
         </router-link>
 

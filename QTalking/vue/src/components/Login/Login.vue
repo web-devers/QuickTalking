@@ -139,7 +139,6 @@
           //设置cookie
   			},
         setTest(){
-				  console.log(this.userInfo)
 				  this.userInfo.name='qtalking'
           this.userInfo.pwd='123456'
           this.userInfo.age='27'
