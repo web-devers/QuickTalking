@@ -9,6 +9,7 @@ var fs = require('fs')
 var path=require('path');
 var uuid = require('node-uuid');
 var sd = require('silly-datetime');
+var md5=require('md5-node');
 
 var app=express();
 // var swig=require('swig');
@@ -94,12 +95,12 @@ io.on('connection',function(sock){
 	// console.log(sock);
 	sock.on('start',function(user){
 		// if(!(UserList.indexOf(user)>-1)){
+		console.log('user',user);
 		if(UserList.some(item=>{
 			if(item.name==user.name){
 				user.old=true;
 			}
 		}))
-		console.log('user',user);
 		if(!user.old){
 			console.log(user.name+"进入聊天室");
 			var userInfo=user
@@ -191,13 +192,13 @@ app.post('/login',bodyParser.json(),function(req,res,next){
 	console.log(req.session.user);
 	//INSERT INTO `user_table` (`ID`,`username`,`PASSWORD`) VALUES(0,'levi','123')
 	if(!req.session.user){
-		db.query(`SELECT * FROM q_user WHERE user = '${req.body.name}'`, (err, data)=>{
+		db.query(`SELECT * FROM q_user WHERE username = '${req.body.name}'`, (err, data)=>{
 	        if(err){
 	        	console.log(err);
 	            res.status(500).send('database error').end();
 	        }else{
 	            if(data.length==0){
-	                db.query("INSERT INTO q_user(ID,user,sex,age,city) VALUES(0,?,?,?,?)",[req.body.name,req.body.sex,req.body.age,req.body.city], (err, data)=>{
+	                db.query("INSERT INTO q_user(ID,username,password,sex,age,city) VALUES(0,?,?,?,?,?)",[req.body.name,md5(req.body.pwd),req.body.sex,req.body.age,req.body.city], (err, data)=>{
 	        	        console.log(err);
 				        if(err){
 	        				console.log(err);
@@ -212,7 +213,7 @@ app.post('/login',bodyParser.json(),function(req,res,next){
 				    });
 	            }else{
 	            	console.log('sel',data);
-	                res.status(200).send({result:'成功',loginStatus:true}).end();
+	                res.status(200).send({result:'成功',loginStatus:true,userInfo:data}).end();
 	            }
 	        }
 	    });
@@ -231,6 +232,19 @@ app.get('/uploadimgs',function (req,res,next) {
 		}
 	})
 })
+app.post('/updavator',bodyParser.json(),function(req,res,next){
+	console.log(req.body)
+    var avaurl=req.body.avator
+	var user=req.body.user
+	db.query("UPDATE q_user SET avator = ? WHERE `username`= ? ", [avaurl,user],(err,data)=> {
+		if (err) {
+			res.status(500).send('database error').end();
+		} else {
+			console.log(data);
+			res.status(200).send({result: 'success', data})
+		}
+	})
+});
 app.post('/uploadimgs',bodyParser.json(),function(req,res,next){
 	//接收前台POST过来的base64   image/png;base64,
     var imgData=JSON.parse(req.body.imgs)
@@ -264,7 +278,7 @@ app.post('/uploadimgs',bodyParser.json(),function(req,res,next){
 function insertImg(user,text,imglist) {
     return new Promise((resolve, reject) => {
         var time=sd.format(Date.now()+1000*60*60*8, 'YYYY-MM-DD HH:mm:ss');
-        db.query("INSERT INTO q_img_msg(id,user,text,imglist,add_time) VALUES(0,?,?,?,?)",[user,text,imglist,time], (err, data)=> {
+        db.query("INSERT INTO q_img_msg(id,username,text,imglist,add_time) VALUES(0,?,?,?,?)",[user,text,imglist,time], (err, data)=> {
             if (err) {
                 reject(err);
             } else {

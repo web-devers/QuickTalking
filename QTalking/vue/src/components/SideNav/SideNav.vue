@@ -1,12 +1,13 @@
 <template>
 	<div class="sideNav">
     <transition name="move">
-      <div class="user" v-if="navtag" @click="chooseHeader">
-        <img src="../../assets/img/3_02.png" v-if="user.sex=='男'">
-        <img src="../../assets/img/3_03.png" v-else="user.sex=='女'">
+      <div class="user" v-if="navtag" @click="chooseSel">
+        <img :src="avator?staticurl+avator:defaultavator" >
+        <!--<img src="../../assets/img/3_02.png" v-if="user.sex=='男'">-->
+        <!--<img src="../../assets/img/3_03.png" v-else="user.sex=='女'">-->
         <div class="info">
-          <p>{{user.name}}</p>
-          <p>{{user.sex}}</p>
+          <p>{{user.username}}</p>
+          <p>{{user.sex==0?'男':'女'}}</p>
         </div>
       </div>
     </transition>
@@ -27,15 +28,14 @@
 			<router-view>
 			</router-view>
 		</transition>
-    <div class="choseHead" v-if="chooseFlag">
-      <div class="bg"></div>
-      <div class="header-con">
-
-      </div>
-    </div>
+    <AvatorSel :chooseflg="chooseFlag" :useavator="avator?staticurl+avator:defaultavator" :user="user"></AvatorSel>
 	</div>
 </template>
 <script type="text/javascript">
+  import imgboy from '../../assets/img/3_02.png'
+  import imggirl from '../../assets/img/3_03.png'
+  import AvatorSel from '../AvatorSel/AvatorSel'
+  import eventBus from '../../eventBus'
 	export default {
 	  props:{
 	  	user: {
@@ -45,6 +45,9 @@
 	  	  type: Boolean
       }
 	  },
+    components:{
+	    AvatorSel
+    },
 	  // watch:{
    //      $route(to,from){
    //        console.log('路由变化');
@@ -53,6 +56,10 @@
    //        this.$store.dispatch('showheader');
    //      }
    //    },
+    mounted(){
+	    console.log(this.user)
+      this.avator=this.user.avator
+    },
 	  data () {
 	    return {
 	      navlist:[
@@ -87,7 +94,11 @@
           }
         ],
 	      msg: 'Welcome to Qtalk App home',
-        chooseFlag:true
+        chooseFlag:false,
+        avator:'',
+        defaultavator:this.user.sex=='男'?imgboy:imggirl,
+        staticurl:'../../../static/avator/'
+
 	    }
 	  },
 	  methods:{
@@ -104,8 +115,12 @@
           window.document.cookie=c_name+ "=" +c_info+";path=/;expires="+exdate.toGMTString();
           // window.document.cookie="userinfo"+"="+c_info+";path=/;expires="+exdate.toGMTString();
       },
-      chooseHeader(){
-	  	  this.chooseFlag=!chooseFlag
+      chooseSel(){
+	  	  this.chooseFlag=!this.chooseFlag
+        eventBus.$on('closesel',function (val) {
+          this.chooseFlag=val.sel
+          this.avator=val.avator
+        }.bind(this))
       }
 	  }
 	}
@@ -119,6 +134,9 @@
 			width:100/$rem;
       height: 64/$rem;
       border-bottom: 1px solid #ccc;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
       &.move-enter-active, &.move-leave-active{
 				transition: all 1s linear;
 			}
@@ -129,20 +147,15 @@
 			img{
 				width: 0.7rem;
 				height: 0.7rem;
-				margin-top:-16/$rem;
-				display:inline-block;
 				border-radius:50%;
 				border: 2px solid #fff;
 				font-size: 0.5rem;
-				line-height: 0.8rem;
 				overflow:hidden;
 				box-sizing:border-box;
 			}
 			.info{
-				margin:0.2rem 0.1rem 0 0;
 				font-size:0.2rem;
-				display:inline-block;
-				line-height:0.25rem;
+				line-height:24px;
         color: deepskyblue;
         font-weight: normal;
 			}
@@ -226,9 +239,6 @@
 				transform: translate3d(100%, 0, 0)
 			}
 		}
-    .choseHead{
-      position: relative;
-      border: 1px solid red;
-    }
+
 	}
 </style>

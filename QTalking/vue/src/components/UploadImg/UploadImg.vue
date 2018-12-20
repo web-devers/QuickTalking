@@ -10,7 +10,7 @@
             <li v-for="it,idx in msgShowList">
               <div class="img-head">
                 <div class="avator">
-                  <img src="../../assets/img/avator/avatar-ts-bopeep.png" alt="">
+                  <img src="../../../static/avator/avatar-ts-bopeep.png" alt="">
                 </div>
                 <div class="name">
                   <p>{{it.user}} </p>
