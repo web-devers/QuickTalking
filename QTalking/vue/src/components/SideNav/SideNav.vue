@@ -5,7 +5,7 @@
         <img :src="avator?staticurl+avator:defaultavator" >
         <!--<img src="../../assets/img/3_02.png" v-if="user.sex=='男'">-->
         <!--<img src="../../assets/img/3_03.png" v-else="user.sex=='女'">-->
-        <div class="info">
+        <div class="info" :style="{color:user.sex==0?'deepskyblue':'red'}">
           <p>{{user.username}}</p>
           <p>{{user.sex==0?'男':'女'}}</p>
         </div>
@@ -179,7 +179,6 @@
 				&.active{
 					height:1.0rem;
 					border-left:0.05rem solid #4bafe3;
-					-border-bottom:0.05rem solid #4bafe3;
 					text-decoration:none;
 					a{
 						color:#4bafe3;
@@ -239,6 +238,5 @@
 				transform: translate3d(100%, 0, 0)
 			}
 		}
-
 	}
 </style>

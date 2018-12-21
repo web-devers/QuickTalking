@@ -10,7 +10,7 @@
             <li v-for="it,idx in msgShowList">
               <div class="img-head">
                 <div class="avator">
-                  <img src="../../../static/avator/avatar-ts-bopeep.png" alt="">
+                  <img :src="staticurl+it.avator" alt="">
                 </div>
                 <div class="name">
                   <p>{{it.user}} </p>
@@ -87,7 +87,8 @@
             msgShowList:[],
             showSwip:false,
             SwipList:[],
-            swipidx:0
+            swipidx:0,
+            staticurl:'../../../static/avator/'
           }
         },
         created(){
@@ -118,6 +119,7 @@
                   this.msgShowList.push({
                     user:it.username,
                     text:it.text,
+                    avator:it.avator,
                     imglist:JSON.parse(it.imglist),
                     addTime:it.add_time
                   })
@@ -269,7 +271,7 @@
           }
         }
         .img-word{
-          margin: 15/$rem 0 0 15/$rem;
+          margin: 15/$rem 0 10/$rem 15/$rem;
           line-height: 12/$rem;
           font-size: 15px;
         }
@@ -278,6 +280,7 @@
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
+            margin-top: -5/$rem;
             padding: 10/$rem;
             overflow: auto;
             img{

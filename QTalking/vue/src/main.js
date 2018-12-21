@@ -52,6 +52,7 @@ Vue.prototype.$jsonp=function getData(data){
 
 require('./assets/css/reset.css'); 	//全局引入
 require('swiper/dist/css/swiper.css')
+import "./assets/css/border.css";
 
 
 /* eslint-disable no-new */

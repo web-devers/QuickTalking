@@ -115,8 +115,6 @@
 				enter(){
 					console.log(this.userInfo);
           var that=this;
-          this.setCookie('QTalking',JSON.stringify(this.userInfo),3)
-          // this.userInfo.img=`../../assets/img/3_0${sex}.png`;
           this.$http({
               url:'/qtserver/login',
               method:'POST',
@@ -132,17 +130,24 @@
               console.log('emit',that.userInfo);
               that.userInfo=res.data.userInfo
               that.$socket.emit('start',that.userInfo);//触发start
-            eventBus.$emit('login',{login:res.data.loginStatus,user:that.userInfo})
+              that.setCookie('QTalking',JSON.stringify(that.userInfo),3)
+              eventBus.$emit('login',{login:res.data.loginStatus,user:that.userInfo})
           }).catch(function(err){
               console.log('err',err);
           })
-          //设置cookie
   			},
         setTest(){
-				  this.userInfo.name='qtalking'
-          this.userInfo.pwd='123456'
-          this.userInfo.age='27'
-          this.userInfo.sex=0
+				  if(!this.testcheck){
+				    this.userInfo.name='qtalking'
+            this.userInfo.pwd='123456'
+            this.userInfo.age='27'
+            this.userInfo.sex=0
+          }else{
+				    this.userInfo.name=''
+            this.userInfo.pwd=''
+            this.userInfo.age=''
+            this.userInfo.sex=0
+          }
         },
         setCookie(c_name,c_info,exdays) {
             var exdate=new Date();//获取时间
@@ -151,7 +156,6 @@
             window.document.cookie=c_name+ "=" +c_info+";path=/;expires="+exdate.toGMTString();
             // window.document.cookie="userinfo"+"="+c_info+";path=/;expires="+exdate.toGMTString();
         },
-          //读取cookie
         getCookie:function () {
           if (document.cookie.length>0) {
             console.log('cook',document.cookie);
@@ -250,13 +254,13 @@ $rem:414/6.4rem;
   height: 100%;
   .move {
     .move-enter-active {
-      transition: all 0.5s linear 0.5s;
+      transition: all 0.5s linear 0.3s;
     }
     .move-enter {
       transform: translate3d(-100%, 0, 0);
     }
     .move-leave-active, .move-leave-to {
-      transition: all 0.5s linear;
+      transition: all 0.3s linear;
       transform: translate3d(100%, 0, 0);
     }
 
@@ -301,7 +305,6 @@ $rem:414/6.4rem;
         }
       }
     }
-
     .regist {
       width: 100%;
       height: (736-100-200)/$rem;

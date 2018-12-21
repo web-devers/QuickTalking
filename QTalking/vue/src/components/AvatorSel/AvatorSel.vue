@@ -160,16 +160,18 @@
         top:80/$rem;
         left: 50%;
         width: 350/$rem;
-        height: 500/$rem;
+        height: 70%;
         margin-left: -0.5*350/$rem ;
         z-index: 1001;
         background: #fff;
         box-shadow: 0 0 5px #2d374b;
         .my-avator{
           margin-top: 10/$rem;
-          height: 80/$rem;
+          height: 20%;
           position: relative;
           img{
+            width: 80/$rem;
+            height: 80/$rem;
             margin: auto;
             border-radius: 50%;
             box-shadow: 0 0 10px #000;
@@ -178,12 +180,13 @@
         }
         .ava-list{
           width: 100%;
-          height: (500-100)/$rem;
-          padding-top: 10/$rem;
+          height: 78%;
+          -margin-top: 10/$rem;
           overflow: auto;
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
+          box-sizing: border-box;
           justify-content: flex-start;
           .ava-item{
             width: 0.2*350/$rem;
@@ -203,7 +206,7 @@
       }
       .footer{
         position: absolute;
-        bottom:100/$rem;
+        bottom:80/$rem;
         width: 100%;
         height: 30/$rem;
         z-index: 1001;

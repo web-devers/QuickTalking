@@ -211,7 +211,7 @@ $rem:414/6.4rem;
 				transform: translate3d(0,0, 0) scale3d(1,0,1)
 			}
 			width:100%;
-			height:36/$rem;
+			height:36px;
 			background:#fff;
 			box-shadow:0 0 3px #bbb;
 			padding:6/$rem 0;
@@ -227,7 +227,7 @@ $rem:414/6.4rem;
 			}
 			.mint-button{
         font-size: 16px;
-        width: 63/$rem;
+        width: 64px;
         height: 28/$rem;
 				margin:2px 12/$rem ;
 			}

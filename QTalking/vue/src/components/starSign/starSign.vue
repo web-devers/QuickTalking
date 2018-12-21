@@ -313,14 +313,12 @@ $rem:414/6.4rem;
 		min-width:414/$rem;
 		width:100%;
 		height:100%;
-		-height:(736-64)/$rem;
 		background:#fff;
 		z-index:10;
 		.back{
 			width:100%;
 			height:36/$rem;
 			background:#26a2ff;
-			-background:transparent;
 			font-size:16px;
 			line-height:36px;
 			color:#fff;
@@ -363,7 +361,6 @@ $rem:414/6.4rem;
 		.input1{
 			width:100%;
 			background:#fff;
-			-box-shadow:0 0 3px #bbb;
 			padding:8px 0;
       display: flex;
 			.ip-cell{
@@ -422,9 +419,6 @@ $rem:414/6.4rem;
 			}
 		}
 		.content1{
-			margin-top:20/$rem;
-			min-height:419/$rem;
-			height:600/$rem;
 			box-sizing:border-box;
 			overflow:hidden;
 			.starList{
@@ -433,24 +427,20 @@ $rem:414/6.4rem;
 				flex-wrap: wrap;
 				align-content: flex-start;
 				justify-content:space-around;
-				-position:absolute;
-				-bottom:0;
-				left:18/$rem;
-				padding-top:30/$rem;
-				width:360/$rem;
-				margin:10px auto;
-				-height:800/$rem;
+				padding:30/$rem 10/$rem;
+        box-sizing: border-box;
+				width:100%;
+        height: 100%;
 				li{
 					width:33%;
-					height:auto;
+					height:20%;
+          margin: 30/$rem 0 ;
 					font-size:11px;
 					margin-bottom:10px;
 					padding:10px 0px;
 					border-radius:10px;
 					box-sizing: border-box;
 					box-shadow:none;
-					-box-shadow:0 0 8px #000;
-					-background:orange;
 					border:none;
 					color:#fff;
 					.star{

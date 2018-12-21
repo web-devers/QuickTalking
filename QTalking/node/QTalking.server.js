@@ -10,6 +10,7 @@ var path=require('path');
 var uuid = require('node-uuid');
 var sd = require('silly-datetime');
 var md5=require('md5-node');
+// var images = require("images");
 
 var app=express();
 // var swig=require('swig');
@@ -241,7 +242,13 @@ app.post('/updavator',bodyParser.json(),function(req,res,next){
 			res.status(500).send('database error').end();
 		} else {
 			console.log(data);
-			res.status(200).send({result: 'success', data})
+			db.query("UPDATE q_img_msg set avator= ? WHERE username=?",[avaurl,user],(err,data)=>{
+				if (err) {
+					res.status(500).send('database error').end();
+				} else {
+					res.status(200).send({result: 'success', data})
+				}
+			})
 		}
 	})
 });
@@ -278,13 +285,22 @@ app.post('/uploadimgs',bodyParser.json(),function(req,res,next){
 function insertImg(user,text,imglist) {
     return new Promise((resolve, reject) => {
         var time=sd.format(Date.now()+1000*60*60*8, 'YYYY-MM-DD HH:mm:ss');
-        db.query("INSERT INTO q_img_msg(id,username,text,imglist,add_time) VALUES(0,?,?,?,?)",[user,text,imglist,time], (err, data)=> {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data)
-            }
-        })
+        db.query("SELECT avator From q_user WHERE username=?",[user],(err,res)=>{
+        	if (err) {
+				res.status(500).send('database error').end();
+			} else {
+        		console.log(res)
+				var avator=res[0].avator
+				db.query("INSERT INTO q_img_msg(id,username,text,imglist,add_time,avator) VALUES(0,?,?,?,?,?)",[user,text,imglist,time,avator||''], (err, data)=> {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(data)
+					}
+				})
+			}
+		})
+
     });
 }
 var writefiles=function(file){
@@ -293,6 +309,7 @@ var writefiles=function(file){
         var dataBuffer = new Buffer(base64Data, 'base64');
         var name=uuid.v4();
         var filedir = ("/media/img/"+name+".png");
+        // zipImage(dataBuffer)
         fs.writeFile('./static'+filedir, dataBuffer, function(err) {
             if(err) {
                 reject(err);
@@ -301,6 +318,16 @@ var writefiles=function(file){
             }
         });
     }))
+}
+var zipImage=function(img){
+	var name=uuid.v4();
+	var filedir = ("/media/img/"+name+".png");
+	images(img)                     //加载图像文件
+    .size(400)                          //等比缩放图像到400像素宽
+    .draw(images("./static/img/log.png"), 10, 10)   //在(10,10)处绘制Logo
+    .save('./static'+filedir, {           //Save the image to a file,whih quality 50
+        quality : 50                    //保存图片到文件,图片质量为50
+    });
 }
 // console.log(process.cwd());
 //用户请求

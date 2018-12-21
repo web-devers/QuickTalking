@@ -8,22 +8,22 @@
 		<div class="content" ref="chatWrapper" >
 			<ul class="chatList">
 				<li class="word" v-for="(item,index) in msgList" >
-					<div>
-						<p class="tm">{{item.tm}}</p>
+					<div class="tm">
+						<span>{{item.tm}}</span>
 					</div>
 					<div class="chatW">
-						<i class="fr clear" v-show="item.my">{{item.nm}}</i>
-						<p class="fr clear" v-show="item.my">{{item.my}}</p>
-						<i class="fl clear" v-show="item.ot">{{item.nm}}</i>
-						<p class="fl clear" v-show="item.ot">{{item.ot}}</p>
-					</div>
+            <i class="fl" ><span v-if="item.ot">{{item.nm}}</span></i>
+						<div class="fl" v-if="item.ot"><span>{{item.ot}}</span></div>
+						<div class="fr" v-if="item.my"><span>{{item.my}}</span></div>
+						<i class="fr" ><span v-if="item.my">{{item.nm}}</span></i>
+        	</div>
 				</li>
 			</ul>
 		</div>
 		<div class="input">
-			<mt-field placeholder="" v-model="msg">
-			</mt-field>
-			<mt-button type="primary" @click="send">发送</mt-button>
+
+      <input type="text" placeholder="" v-model="msg" class="ip-cell">
+      <div class="ip-btn" @click="send">发送</div>
 		</div>
 		<div class="background" v-show='listShow'></div>
 		<div class="list" v-show='listShow'>
@@ -271,20 +271,25 @@
 </script>
 <style lang="scss" scoped>
 $rem:414/6.4rem;
+@mixin ellipse{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 	.chatRoom{
 		position:fixed;
 		top:0/$rem;
 		left:0/$rem;
-		min-width:414/$rem;
 		width:100%;
-		height:(736-64)/$rem;
+		height:100%;
+    display: flex;
+    flex-direction: column;
 		background:#fff;
 		z-index:10;
 		.back{
 			width:100%;
 			height:36/$rem;
 			background:#26a2ff;
-			-background:transparent;
 			font-size:16px;
 			line-height:36px;
 			color:#fff;
@@ -297,80 +302,65 @@ $rem:414/6.4rem;
 			}
 		}
 		.content{
-			width:400/$rem;
-			height:590/$rem;
+			width:100%;
+      flex: 1;
+      height: 100%;
 			position:relative;
-			-height:auto;
 			margin:10px auto;
 			box-shadow:0 0 2px #aaa;
-			overflow:hidden;
+			overflow:auto;
 			ul{
 				position:absolute;
-				bottom:0;
-				width:360/$rem;
-				-left:30/$rem;
-				min-height:580/$rem;
-				height:auto;
+				width:100%;
 				box-size:border-box;
-				padding:50px 10px 20px 10px;
 				box-size:border-box;
-				li.word{
-					width:360/$rem;
-					min-height:42/$rem;
-					height:auto;
-					margin:10px 10px;
-					padding:10px 0;
-					box-size:border-box;
+        padding:6px 6px;
+				.word{
+					width:100%;
+          height: auto;
 					font-size:18px;
-					line-height:36/$rem;
-					-border:1px solid red;
+					line-height:24/$rem;
 					box-shadow:none;
-					div{
-						width:100%;
-						&.chatW{
-							margin-bottom:20px;
-						}
-						p{
-							max-width:90%;
-							padding:0px 15px 0px 15px;
-							border-radius:9px;
+          .tm{
+            width:100%;
+            text-align:center;
+            margin:0px auto;
+            font-size:12px;
+            color:#bbb;
+            span{
+               background: #eee;
+               height: 15px;
+              border-radius: 3px;
+              padding: 1px 2px;
+            }
+          }
+					.chatW{
+            display: flex;
+						div{
+              flex: 1;
+              margin: 3px 0;
+              font-size: 12px;
+              line-height: 16px;
 							&.fl{
-								color:#fff;
-								-text-indent:15px;
-								background:#26a2ff;
-								float:left;
 								margin-right:60/$rem;
-
+                text-align: left;
 							}
 							&.fr{
-								color:#26a2ff;
-								background:#eee;
-								float:right;
-							}
-							&.tm{
-								width:90%;
-								-width:200/$rem;
-								text-align:center;
-								margin:0px auto;
-								font-size:12px;
 								color:#bbb;
-								-line-height:36px;
+                text-align: right;
 							}
 						}
 						i{
-							-color:#c04;
-							font-size:15px;
-							line-height:36px;
+              width: 70px;
+              @include ellipse;
+							font-size:13px;
+              line-height: 16px;
 							font-style: normal;
 							&.fl{
 								color:#c56;
-								float:left;
-								margin-right:5px;
 							}
 							&.fr{
 								color:#26a2ff;
-								float:right;
-								margin-left:8px;
 							}
 						}
 					}
@@ -378,24 +368,31 @@ $rem:414/6.4rem;
 			}
 		}
 		.input{
-			position:fixed;
 			bottom:0px;
 			width:100%;
+      height: 30px;
 			background:#fff;
 			box-shadow:0 0 3px #bbb;
-			padding:8px 0;
-			.mint-cell{
-				width:300/$rem;
-				float:left;
-				-border:1px solid #bbb;
-				box-shadow:0 0 2px #bbb inset;
+			padding:3px 0;
+      display: flex;
+      align-items: center;
+			.ip-cell{
+        flex: 1;
+        height: 24px;
+				border:1px solid #26a2ff;
 				border-radius:5px;
-				margin-left:28/$rem;
+        text-indent: 5px;
+        margin: 0 10/$rem;
 			}
-			.mint-button{
-				float:left;
-				vertical-align:text-bottom;
-				margin:5px 0 0 5/$rem;
+			.ip-btn{
+        width: 60/$rem;
+        height: 24px;
+        margin: 0 5px;
+        background: #26a2ff;
+        color:#fff;
+        border-radius:5px;
+        font-size: 15px;
+        line-height: 24/$rem;
 			}
 		}
 		.background{
