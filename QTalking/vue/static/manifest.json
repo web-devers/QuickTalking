@@ -1,0 +1,22 @@
+{
+    "scope": "/",
+    "name": "Talking",
+    "short_name": "Talking",
+    "start_url": "/?from=homescreen",
+    "display": "standalone",
+    "description": "即时通讯",
+    "orientation": "portrait",
+    "theme_color": "#26a2ff",
+    "background_color": "#fff",
+    "icons": [{
+      "src": "./2_3_13.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "../2_3_13.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+    ]
+}

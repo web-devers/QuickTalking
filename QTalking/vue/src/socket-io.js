@@ -2,5 +2,5 @@ import Vue from 'vue'
 import VueSocketio from 'vue-socket.io';
 import socketio from 'socket.io-client';
 // Vue.use(VueSocketio, socketio('http://localhost:8087'));//与服务端链接http://xxx.xxx,xx,xxx:xxxx
-Vue.use(VueSocketio, socketio('http://192.168.101.9:808'));//与服务端链接http://xxx.xxx,xx,xxx:xxxx
+Vue.use(VueSocketio, socketio('http://192.168.101.137:808'));//与服务端链接http://xxx.xxx,xx,xxx:xxxx
 // Vue.use(VueSocketio, socketio('http://47.106.102.92:808'));//与服务端链接http://xxx.xxx,xx,xxx:xxxx

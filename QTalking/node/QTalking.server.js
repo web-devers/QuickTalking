@@ -39,13 +39,13 @@ app.use(session({
 		maxAge:20*3600*1000,
 		path:'/',
 		// domain: '192.168.31.177',
-		domain: '192.168.101.9',
+		domain: '192.168.101.137',
 		httpOnly: false
 	}
 }))
 app.all('*', function(req, res, next) {
     // res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Origin", "http://192.168.101.9:8088");
+    res.header("Access-Control-Allow-Origin", "http://192.168.101.137:80");
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
@@ -337,7 +337,7 @@ var zipImage=function(img){
 
 app.use(static('./static/'));
 // http.listen(808,'192.168.31.177');
-http.listen(808,'192.168.101.9');
+http.listen(808,'192.168.101.137');
 
 // ALTER USER "root"@"localhost" IDENTIFIED  BY "你的新密码";
 

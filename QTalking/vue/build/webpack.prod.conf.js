@@ -11,6 +11,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const proxy=require('http-proxy-middleware')
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
 const env = require('../config/prod.env')
 
@@ -116,7 +117,15 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    // service worker caching
+      new SWPrecacheWebpackPlugin({
+        cacheId: 'my-vue-app',
+        filename: 'service-worker.js',
+        staticFileGlobs: ['dist/**/*.{js,html,css}'],
+        minify: true,
+        stripPrefix: 'dist/'
+      }),
   ]
 })
 

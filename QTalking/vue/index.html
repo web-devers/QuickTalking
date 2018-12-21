@@ -9,9 +9,15 @@
     <script src="static/js/font.js"></script>
     <link rel="stylesheet" type="text/css" href="static/css/reset.css">
     <link rel="shortcut icon" type="image/x-icon" href="static/2_03_03.png">
+    <!-- 添加manifest文件 -->
+    <link rel="manifest" href="/static/manifest.json">
   </head>
+  <!--<script src=<%= htmlWebpackPlugin.options.path %>/tinymce4.7.5/tinymce.min.js></script>-->
   <body>
+    <!-- 注册service-worker.js -->
+    <%= htmlWebpackPlugin.options.serviceWorkerLoader %>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <!--chrome://flags/#enable-app-banners-->
   </body>
 </html>
