@@ -87,24 +87,24 @@ $rem:414/6.4rem;
     z-index: 99;
     background: #fff;
     .box{
-      width: 50px;
+      width:100%;
       height: 1px;
       margin: 20px auto ;
       @include border1(deepskyblue)
     }
     .box2{
-      width: 50px;
+      width: 100%;
       height: 50px;
       margin: 20px auto ;
     }
     .box3{
-      width: 50px;
+      width: 100%;
       height: 50px;
       margin: 20px auto ;
       border: 1px solid #000;
     }
     .box4{
-      width: 50px;
+      width: 100%;
       height: 50px;
       margin: 20px auto ;
       @include border2(8,deepskyblue)
