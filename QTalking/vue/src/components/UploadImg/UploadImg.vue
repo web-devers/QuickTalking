@@ -47,7 +47,7 @@
             <i class="pic"></i>
             <p>上传</p>
           </label>
-          <div class="img-show" >
+          <div class="img-dis" >
               <div class="flex">
                 <div class="img-dtl" v-for="(it,idx) in qmsglist.imgs">
                   <img width="100%" height="100%" :src="it.img" alt="">
@@ -66,6 +66,7 @@
 <script>
     import MySwiper from '../MySwiper/MySwiper'
     import eventBus from '../../eventBus'
+
     export default {
         name: "uploadImg",
         props:{
@@ -88,6 +89,7 @@
             showSwip:false,
             SwipList:[],
             swipidx:0,
+            dpr:window.devicePixelRatio,
             staticurl:'../../../static/avator/'
           }
         },
@@ -160,9 +162,8 @@
               })
             }
           },
-          getuploadImg:function(e) {
+          getuploadImg(e) {
             var upimgs = e.target.files;
-            console.log( upimgs)
             for (var i=0;i<upimgs.length;i++){
               if(i<=8){
                 var name=upimgs[i].type.toLowerCase().split('.')[0];
@@ -171,11 +172,13 @@
                 console.log(type)
                 if(type==="jpeg"||type==="png"){
                   var reader=new FileReader();
-                  var upimg=reader.readAsDataURL(upimgs[i]);
-                  reader.onload=function (e) {
+                  reader.readAsDataURL(upimgs[i]);
+                  reader.onload=async function (e) {
+                    var base64=await that.compress(e.target.result,type)
+                    // var blob=that.dataURItoBlob(base64);
                     that.qmsglist.imgs.push({
                       name:name,
-                      img:e.target.result
+                      img:base64
                     })
                   }
                 }
@@ -193,9 +196,58 @@
               this.showSwip=flag.showSwip
             }.bind(this))
           },
+          // 压缩图片
+          compress(img,type) {
+            return new Promise((resolve,reject)=>{
+              let canvas = document.createElement("canvas");
+              let imgDom = new Image();
+              let ctx = canvas.getContext("2d");
+              imgDom.src = img;
+              imgDom.onload= function(){
+                let width = imgDom.width;
+                let height = imgDom.height;
+                let ratio = this.getPixelRatio(ctx);
+                canvas.style.width = width;
+                canvas.style.height = height;
+                canvas.width = width;
+                canvas.height = height;
+                // 铺底色
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(imgDom, 0, 0, width, height);
+                let ndata = canvas.toDataURL("image/"+type, 0.3);
+                resolve(ndata);
+              }.bind(this)
+            })
+          },
+          // base64转成bolb对象
+          dataURItoBlob(base64Data) {
+            var byteString;
+            if (base64Data.split(",")[0].indexOf("base64") >= 0)
+              byteString = atob(base64Data.split(",")[1]);
+            else byteString = unescape(base64Data.split(",")[1]);
+            var mimeString = base64Data
+              .split(",")[0]
+              .split(":")[1]
+              .split(";")[0];
+            var ia = new Uint8Array(byteString.length);
+            for (var i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ia], { type: mimeString });
+          },
           remove(idx){
             console.log(idx)
             this.qmsglist.imgs.splice(idx,1)
+          },
+          getPixelRatio(context){
+            var backingStore = context.backingStorePixelRatio ||
+            context.webkitBackingStorePixelRatio ||
+            context.mozBackingStorePixelRatio ||
+            context.msBackingStorePixelRatio ||
+            context.oBackingStorePixelRatio ||
+            context.backingStorePixelRatio || 1;
+            return (window.devicePixelRatio || 1) / backingStore;
           }
         },
         filters:{
@@ -300,7 +352,7 @@
             }
             &.imgcnteq3{
               img{
-                width:33% ;
+                width:32% ;
               }
             }
             &.imgcnteq4{
@@ -358,7 +410,7 @@
       }
     }
     .img-show{
-      height: 64/$rem;
+      min-height: 64/$rem;
       display: flex;
       align-items: flex-start;
         #img-btn{
@@ -376,7 +428,7 @@
             background:url('../../assets/img/upimg.png') 0 0/cover;
           }
         }
-        .img-show{
+        .img-dis{
           flex: 1;
           min-height: 60/$rem;
           display: flex;

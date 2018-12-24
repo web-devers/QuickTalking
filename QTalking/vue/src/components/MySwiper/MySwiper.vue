@@ -62,7 +62,7 @@
               initialSlide :n,
               loop:false,
               // slidesPerView: this.imgList.length,
-              effect : 'cube',//cube,coverflow,flip,fade
+              effect : 'coverflow',//cube,coverflow,flip,fade
               autoplay: {
                 delay: 1800,
                 stopOnLastSlide: false,

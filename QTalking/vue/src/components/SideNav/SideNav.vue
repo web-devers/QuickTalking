@@ -88,7 +88,7 @@
             claz:'dict',
             name:'性格'
           },{
-            to:'/Sstore:',
+            to:'/Estore:',
             claz:'estore',
             name:'商场'
           }

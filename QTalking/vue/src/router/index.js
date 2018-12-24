@@ -7,6 +7,7 @@ import UploadImg from '@/components/UploadImg/UploadImg.vue'
 import Cave from '@/components/Cave/Cave.vue'
 import Star from '@/components/starSign/starSign.vue'
 import Dict from '@/components/Dict/Dict'
+import Estore from '@/components/Estore/Estore'
 
 Vue.use(Router)
 
@@ -43,9 +44,14 @@ export default new Router({
       component: Star
     },
     {
-      path: '/Dic:name',
+      path: '/Dict:name',
       name: 'Dict',
       component: Dict
+    },
+    {
+      path: '/Estore:name',
+      name: 'Estore',
+      component: Estore
     }
   ]
 })
